@@ -1,0 +1,155 @@
+/* assets/styles/main.css */
+@import "tailwindcss";
+
+/* ── Design Tokens ──────────────────────────── */
+@theme {
+  --color-bg: #FAF8F3;
+  --color-text: #1A1208;
+  --color-muted: #8A7A65;
+  --color-accent: #C7622A;
+  --color-border: #DDD8CE;
+  --color-surface: #F0EBE2;
+
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --spacing-section: 48px;
+  --max-width: 1080px;
+}
+
+/* ── CSS Custom Properties (runtime access) ─── */
+:root {
+  --bg: #FAF8F3;
+  --text: #1A1208;
+  --text-muted: #8A7A65;
+  --accent: #C7622A;
+  --border: #DDD8CE;
+  --surface: #F0EBE2;
+}
+
+/* ── Base Reset ─────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Typography Utilities ───────────────────── */
+.font-serif { font-family: var(--font-serif); }
+.font-mono  { font-family: var(--font-mono); }
+
+.text-display {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.text-section-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 36px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.text-project-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.text-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.text-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.text-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* ── Layout ─────────────────────────────────── */
+.container {
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: 40px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-inline: 20px;
+  }
+}
+
+/* ── Border utility ─────────────────────────── */
+.border-editorial { border-bottom: 1px solid var(--border); }
+.border-editorial-top { border-top: 1px solid var(--border); }
+
+/* ── Hover underline draw ───────────────────── */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.25s linear;
+}
+.link-underline:hover::after { width: 100%; }
+
+/* ── Focus styles ───────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── Reduced motion ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .gsap-target { opacity: 1 !important; transform: none !important; }
+}
