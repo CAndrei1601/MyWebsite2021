@@ -2,5 +2,6 @@
 <template>
   <main>
     <HeroSection />
+    <StripSection />
   </main>
 </template>
