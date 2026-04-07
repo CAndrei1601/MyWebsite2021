@@ -7,5 +7,6 @@ import '~/assets/styles/main.css'
   <div>
     <AppNav />
     <NuxtPage />
+    <AppFooter />
   </div>
 </template>
