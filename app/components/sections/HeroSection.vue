@@ -328,9 +328,7 @@ if (import.meta.client) {
 .hero-canvas-wrap {
   position: relative;
   height: 420px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--surface);
+  background: var(--bg);
   overflow: hidden;
 }
 
