@@ -16,6 +16,10 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
+  components: {
+    dirs: [{ path: '~/components', pathPrefix: false }],
+  },
+
   modules: ['@nuxtjs/seo', '@nuxt/fonts'],
 
   fonts: {
