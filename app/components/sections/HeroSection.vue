@@ -157,8 +157,10 @@ if (import.meta.client) {
   }
 
   function getSectionPos(e: MouseEvent) {
-    const section = canvasRef.value!.parentElement!
-    const r = section.getBoundingClientRect()
+    // parentElement is always hero-canvas-wrap
+    // desktop: right column; mobile: absolute over full hero
+    const wrap = canvasRef.value!.parentElement!
+    const r = wrap.getBoundingClientRect()
     return { x: e.clientX - r.left, y: e.clientY - r.top }
   }
 
@@ -170,9 +172,10 @@ if (import.meta.client) {
   function onMouseLeave() { mouse.x = mouse.y = -9999 }
 
   function onClick(e: MouseEvent) {
-    // Don't burst on buttons/links
     if ((e.target as HTMLElement).closest('a, button')) return
     const { x, y } = getSectionPos(e)
+    // Only burst if click lands within the canvas bounds
+    if (x < 0 || x > W || y < 0 || y > H) return
     for (let i = 0; i < 22; i++) particles.push(mkParticle(x, y, true))
   }
 
@@ -199,12 +202,9 @@ if (import.meta.client) {
     @mouseleave="onMouseLeave"
     @click="onClick"
   >
-    <!-- Canvas: absolute background layer -->
-    <canvas ref="canvasRef" class="hero-canvas" aria-hidden="true" />
-    <p class="canvas-hint font-mono" aria-hidden="true">click to interact</p>
-
-    <!-- Text: above the canvas -->
     <div class="container hero-inner">
+
+      <!-- Left: text content -->
       <div class="hero-text">
         <p ref="eyebrowRef" class="hero-eyebrow text-eyebrow">
           Frontend Engineer — Cluj, Romania
@@ -231,6 +231,13 @@ if (import.meta.client) {
           </div>
         </div>
       </div>
+
+      <!-- Right col on desktop / absolute background on mobile -->
+      <div class="hero-canvas-wrap" aria-hidden="true">
+        <canvas ref="canvasRef" class="hero-canvas" />
+        <p class="canvas-hint font-mono">click to interact</p>
+      </div>
+
     </div>
   </section>
 </template>
@@ -242,38 +249,44 @@ if (import.meta.client) {
   padding-bottom: 56px;
 }
 
-/* Canvas fills the whole hero section, sits behind everything */
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* ── Left: text ──────────────────────────────────── */
+.hero-text {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Right: canvas (desktop grid item) ───────────── */
+.hero-canvas-wrap {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+}
+
 .hero-canvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
 }
 
 .canvas-hint {
   position: absolute;
   bottom: 14px;
-  right: 24px;
+  right: 16px;
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--border);
   pointer-events: none;
   user-select: none;
-  z-index: 2;
-}
-
-.hero-inner {
-  position: relative;
-  z-index: 1;
-}
-
-/* ── Text column ─────────────────────────────────── */
-.hero-text {
-  display: flex;
-  flex-direction: column;
 }
 
 .hero-eyebrow {
@@ -351,6 +364,28 @@ if (import.meta.client) {
 }
 
 /* ── Responsive ──────────────────────────────────── */
+@media (max-width: 900px) {
+  /* Collapse to single column; canvas-wrap leaves the flow */
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  /* Canvas becomes a full-hero background layer */
+  .hero-canvas-wrap {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    z-index: 0;
+  }
+
+  /* Text stays readable above the canvas */
+  .hero-text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
 @media (max-width: 768px) {
   .hero { padding-top: 110px; }
   .hero-bottom {
