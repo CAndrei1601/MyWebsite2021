@@ -58,7 +58,7 @@ useGsap((gsap, ScrollTrigger) => {
               class="contact-link font-mono link-underline"
             >LinkedIn</a>
             <a
-              href="/Andrei-CV.pdf"
+              href="/CV- Chiorean Andrei 2026.pdf"
               download
               class="contact-link font-mono link-underline"
             >Resume ↓</a>
