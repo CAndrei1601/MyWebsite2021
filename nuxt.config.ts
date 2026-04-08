@@ -26,6 +26,11 @@ export default defineNuxtConfig({
     ],
   },
 
+  site: {
+    url: 'https://andreichiorean.dev',
+    name: 'Andrei Chiorean — Frontend Engineer',
+  },
+
   seo: {
     redirectToCanonicalSiteUrl: true,
   },
