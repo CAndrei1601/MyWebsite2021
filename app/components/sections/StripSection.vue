@@ -1,62 +1,64 @@
 <!-- app/components/sections/StripSection.vue -->
 <template>
-  <div class="strip border-editorial" aria-hidden="true">
-    <div class="strip-track">
-      <!-- Duplicated for seamless loop -->
-      <template v-for="i in 2" :key="i">
-        <span class="strip-item strip-item--highlight">Open to Work</span>
-        <span class="strip-item">Design Systems</span>
-        <span class="strip-sep">·</span>
-        <span class="strip-item">Vue 3 · React · TypeScript</span>
-        <span class="strip-sep">·</span>
-        <span class="strip-item">GSAP · Motion Design</span>
-        <span class="strip-sep">·</span>
-        <span class="strip-item">Production Platforms</span>
-        <span class="strip-sep">·</span>
-        <span class="strip-item">Cluj, Romania</span>
-        <span class="strip-sep">·</span>
-      </template>
-    </div>
+  <div class="strip">
+    <span class="strip-badge strip-badge--accent">Open to Work</span>
+    <span class="strip-item">Vue 3</span>
+    <span class="strip-item">React</span>
+    <span class="strip-item">TypeScript</span>
+    <span class="strip-item">Nuxt</span>
+    <span class="strip-item">Design Systems</span>
+    <span class="strip-item">GSAP</span>
+    <span class="strip-item">Component Architecture</span>
+    <span class="strip-item">UI / UX Engineering</span>
+    <span class="strip-item">Cluj, Romania</span>
   </div>
 </template>
 
 <style scoped>
 .strip {
-  overflow: hidden;
-  padding: 0;
-}
-
-.strip-track {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 40px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  animation: marquee 30s linear infinite;
-  width: max-content;
+  gap: 8px;
 }
 
 .strip-item {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--text-muted);
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 5px 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.strip-item--highlight { color: var(--accent); }
+.strip-item:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
 
-.strip-sep {
-  color: var(--border);
+.strip-badge--accent {
   font-family: var(--font-mono);
-  font-size: 11px;
-  padding: 0 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  padding: 5px 10px;
 }
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .strip-track { animation: none; }
+@media (max-width: 600px) {
+  .strip {
+    padding: 14px 20px;
+    gap: 6px;
+  }
 }
 </style>
