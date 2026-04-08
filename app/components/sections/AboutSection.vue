@@ -60,6 +60,21 @@ const facts = [
             engineer who notices when a transition is 20ms too slow.
           </p>
 
+          <div class="experience-highlight gsap-about">
+            <span class="text-eyebrow">Professional Experience</span>
+            <p class="experience-text">
+              Worked on a high-traffic, multi-tenant platform delivering
+              <strong>12+ branded products</strong>, focusing on design systems,
+              token-driven UI, and scalable frontend architecture.
+            </p>
+            <div class="experience-tags">
+              <span class="exp-tag">12+ Products</span>
+              <span class="exp-tag">Multi-tenant</span>
+              <span class="exp-tag">Design Systems</span>
+              <span class="exp-tag">Token-driven UI</span>
+            </div>
+          </div>
+
           <div class="about-links gsap-about">
             <a
               href="/CV- Chiorean Andrei 2026.pdf"
@@ -155,6 +170,46 @@ const facts = [
   transition: opacity 0.15s;
 }
 .project-link:hover { opacity: 0.7; }
+
+.experience-highlight {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 18px 20px 18px 18px;
+  background: var(--surface);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.experience-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.experience-text strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.experience-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.exp-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 3px 8px;
+  border-radius: 2px;
+}
 
 .about-right {
   padding: 48px 0 48px 48px;
