@@ -38,10 +38,10 @@ useGsap((gsap, ScrollTrigger) => {
 
         <div class="contact-right gsap-contact">
           <a
-            href="mailto:chioreanandrei92@gmail.com"
+            href="mailto:chioreanandrei21@gmail.com"
             class="contact-email font-mono link-underline"
           >
-            chioreanandrei92@gmail.com
+            chioreanandrei21@gmail.com
           </a>
 
           <div class="contact-links">

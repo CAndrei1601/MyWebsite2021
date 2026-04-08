@@ -22,7 +22,7 @@ useGsap((gsap, _ST, SplitText) => {
 })
 
 function copyEmail() {
-  navigator.clipboard.writeText('chioreanandrei92@gmail.com')
+  navigator.clipboard.writeText('chioreanandrei21@gmail.com')
 }
 
 /* ── Canvas particle system ───────────────────────── */
@@ -197,7 +197,7 @@ onUnmounted(() => {
           <div ref="actionsRef" class="hero-actions">
             <a href="#work" class="btn-primary">View Work</a>
             <button class="btn-secondary font-mono" @click.stop="copyEmail">
-              chioreanandrei92@gmail.com
+              chioreanandrei21@gmail.com
             </button>
           </div>
         </div>
