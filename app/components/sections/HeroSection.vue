@@ -150,25 +150,30 @@ if (import.meta.client) {
 
   function resize() {
     if (!canvasRef.value) return
-    const el = canvasRef.value
-    W = el.width  = el.offsetWidth
-    H = el.height = el.offsetHeight
+    const section = canvasRef.value.parentElement!
+    W = canvasRef.value.width  = section.offsetWidth
+    H = canvasRef.value.height = section.offsetHeight
     initParticles()
   }
 
+  function getSectionPos(e: MouseEvent) {
+    const section = canvasRef.value!.parentElement!
+    const r = section.getBoundingClientRect()
+    return { x: e.clientX - r.left, y: e.clientY - r.top }
+  }
+
   function onMouseMove(e: MouseEvent) {
-    const r  = canvasRef.value!.getBoundingClientRect()
-    mouse.x  = e.clientX - r.left
-    mouse.y  = e.clientY - r.top
+    const p = getSectionPos(e)
+    mouse.x = p.x; mouse.y = p.y
   }
 
   function onMouseLeave() { mouse.x = mouse.y = -9999 }
 
   function onClick(e: MouseEvent) {
-    const r  = canvasRef.value!.getBoundingClientRect()
-    const cx = e.clientX - r.left
-    const cy = e.clientY - r.top
-    for (let i = 0; i < 22; i++) particles.push(mkParticle(cx, cy, true))
+    // Don't burst on buttons/links
+    if ((e.target as HTMLElement).closest('a, button')) return
+    const { x, y } = getSectionPos(e)
+    for (let i = 0; i < 22; i++) particles.push(mkParticle(x, y, true))
   }
 
   onMounted(() => {
@@ -176,9 +181,6 @@ if (import.meta.client) {
     ctx = canvasRef.value.getContext('2d')
     resize()
     tick()
-    canvasRef.value.addEventListener('mousemove',  onMouseMove)
-    canvasRef.value.addEventListener('mouseleave', onMouseLeave)
-    canvasRef.value.addEventListener('click',      onClick)
     window.addEventListener('resize', resize)
   })
 
@@ -190,10 +192,19 @@ if (import.meta.client) {
 </script>
 
 <template>
-  <section id="home" class="hero border-editorial">
-    <div class="container hero-inner">
+  <section
+    id="home"
+    class="hero border-editorial"
+    @mousemove="onMouseMove"
+    @mouseleave="onMouseLeave"
+    @click="onClick"
+  >
+    <!-- Canvas: absolute background layer -->
+    <canvas ref="canvasRef" class="hero-canvas" aria-hidden="true" />
+    <p class="canvas-hint font-mono" aria-hidden="true">click to interact</p>
 
-      <!-- Left: text content -->
+    <!-- Text: above the canvas -->
+    <div class="container hero-inner">
       <div class="hero-text">
         <p ref="eyebrowRef" class="hero-eyebrow text-eyebrow">
           Frontend Engineer — Cluj, Romania
@@ -214,37 +225,52 @@ if (import.meta.client) {
 
           <div ref="actionsRef" class="hero-actions">
             <a href="#work" class="btn-primary">View Work</a>
-            <button class="btn-secondary font-mono" @click="copyEmail">
+            <button class="btn-secondary font-mono" @click.stop="copyEmail">
               chioreanandrei92@gmail.com
             </button>
           </div>
         </div>
       </div>
-
-      <!-- Right: interactive canvas -->
-      <div class="hero-canvas-wrap" aria-hidden="true">
-        <canvas ref="canvasRef" class="hero-canvas" />
-        <p class="canvas-hint font-mono">click to interact</p>
-      </div>
-
     </div>
   </section>
 </template>
 
 <style scoped>
 .hero {
+  position: relative;
   padding-top: 140px;
   padding-bottom: 56px;
 }
 
-.hero-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
+/* Canvas fills the whole hero section, sits behind everything */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* ── Left column ─────────────────────────────────── */
+.canvas-hint {
+  position: absolute;
+  bottom: 14px;
+  right: 24px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--border);
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Text column ─────────────────────────────────── */
 .hero-text {
   display: flex;
   flex-direction: column;
@@ -324,43 +350,7 @@ if (import.meta.client) {
   border-color: var(--text-muted);
 }
 
-/* ── Right column: canvas ────────────────────────── */
-.hero-canvas-wrap {
-  position: relative;
-  height: 420px;
-  background: var(--bg);
-  overflow: hidden;
-}
-
-.hero-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  cursor: crosshair;
-}
-
-.canvas-hint {
-  position: absolute;
-  bottom: 14px;
-  right: 16px;
-  font-size: 9px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--border);
-  pointer-events: none;
-  user-select: none;
-}
-
 /* ── Responsive ──────────────────────────────────── */
-@media (max-width: 900px) {
-  .hero-inner {
-    grid-template-columns: 1fr;
-  }
-  .hero-canvas-wrap {
-    height: 260px;
-  }
-}
-
 @media (max-width: 768px) {
   .hero { padding-top: 110px; }
   .hero-bottom {
@@ -370,9 +360,6 @@ if (import.meta.client) {
 }
 
 @media (max-width: 480px) {
-  .hero-canvas-wrap {
-    height: 200px;
-  }
   .btn-secondary {
     max-width: 100%;
     overflow: hidden;
