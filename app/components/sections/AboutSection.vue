@@ -205,4 +205,17 @@ const facts = [
   }
   .about-right { padding: 36px 0; }
 }
+
+@media (max-width: 480px) {
+  .about-pull {
+    font-size: 17px;
+  }
+  .about-links {
+    gap: 16px;
+  }
+  .fact-value--mono {
+    font-size: 11px;
+    word-break: break-word;
+  }
+}
 </style>

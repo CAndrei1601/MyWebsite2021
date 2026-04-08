@@ -38,5 +38,6 @@
 
 @media (max-width: 600px) {
   .footer-inner { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .footer-left { font-size: 10px; }
 }
 </style>

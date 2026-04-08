@@ -125,4 +125,14 @@ useGsap((gsap, ScrollTrigger) => {
     padding: 36px 0 48px;
   }
 }
+
+@media (max-width: 480px) {
+  .contact-email {
+    font-size: 13px;
+    word-break: break-all;
+  }
+  .contact-links {
+    gap: 16px;
+  }
+}
 </style>

@@ -142,6 +142,7 @@ defineProps<{ project: Project }>()
 
 .project-image {
   width: 100%;
+  max-width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
@@ -159,20 +160,23 @@ defineProps<{ project: Project }>()
     grid-template-columns: 1fr;
   }
 
+  /* Info always on top, image always below, regardless of reversed variant */
   .project-info,
   .project-spread--reversed .project-info {
-    order: 2;
+    order: 1;
     padding: 32px 0;
     border-right: none;
     border-left: none;
-    border-top: 1px solid var(--border);
+    border-top: none;
+    border-bottom: 1px solid var(--border);
   }
 
   .project-visual,
   .project-spread--reversed .project-visual {
-    order: 1;
+    order: 2;
     min-height: 220px;
     padding: 24px;
+    overflow: hidden;
   }
 }
 </style>
