@@ -11,6 +11,8 @@
       <span class="strip-item">GSAP</span>
       <span class="strip-item">Component Architecture</span>
       <span class="strip-item">UI / UX Engineering</span>
+      <span class="strip-item">AI Tools</span>
+      <span class="strip-item">API Integration</span>
       <span class="strip-item">Cluj, Romania</span>
     </div>
   </div>
