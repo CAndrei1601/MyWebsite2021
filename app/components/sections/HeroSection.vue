@@ -1,8 +1,9 @@
 <!-- app/components/sections/HeroSection.vue -->
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useGsap } from '~/composables/useGsap'
 
+/* ── GSAP text animation ──────────────────────────── */
 const headlineRef = ref<HTMLElement | null>(null)
 const eyebrowRef  = ref<HTMLElement | null>(null)
 const bioRef      = ref<HTMLElement | null>(null)
@@ -12,11 +13,10 @@ useGsap((gsap, _ST, SplitText) => {
   const tl = gsap.timeline({ defaults: { ease: 'power2.out' } })
   const split = new SplitText(headlineRef.value, { type: 'words' })
 
-  // Set initial states
   gsap.set(split.words, { y: 30, opacity: 0 })
   gsap.set([eyebrowRef.value, bioRef.value, actionsRef.value], { y: 20, opacity: 0 })
 
-  tl.to(eyebrowRef.value,  { y: 0, opacity: 1, duration: 0.4, ease: 'power2.out' })
+  tl.to(eyebrowRef.value,  { y: 0, opacity: 1, duration: 0.4 })
     .to(split.words,       { y: 0, opacity: 1, duration: 0.6, stagger: 0.07, ease: 'power3.out' }, '-=0.1')
     .to(bioRef.value,      { y: 0, opacity: 1, duration: 0.5 }, '-=0.2')
     .to(actionsRef.value,  { y: 0, opacity: 1, duration: 0.4 }, '-=0.25')
@@ -27,35 +27,206 @@ useGsap((gsap, _ST, SplitText) => {
 function copyEmail() {
   navigator.clipboard.writeText('chioreanandrei92@gmail.com')
 }
+
+/* ── Canvas particle system ───────────────────────── */
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+
+if (import.meta.client) {
+  // Brand palette
+  const COLORS = [
+    '#C7622A', '#C7622A',           // terracotta – accent, appears most
+    '#DDD8CE', '#DDD8CE', '#DDD8CE',// border/muted – dominant
+    '#8A7A65', '#8A7A65',           // text-muted
+    '#1A1208',                       // text – rare, smallest dots only
+  ]
+
+  type Shape = 'circle' | 'diamond'
+
+  interface Particle {
+    x: number; y: number
+    vx: number; vy: number
+    baseVy: number
+    size: number; color: string
+    alpha: number; z: number
+    shape: Shape; phase: number
+    burst: boolean; decay: number
+  }
+
+  let ctx: CanvasRenderingContext2D | null = null
+  let W = 0, H = 0
+  let animId = 0
+  let frame  = 0
+  let particles: Particle[] = []
+  const mouse = { x: -9999, y: -9999 }
+
+  function mkParticle(x?: number, y?: number, burst = false): Particle {
+    const z     = Math.random()
+    const speed = 0.12 + z * 0.28
+    const angle = burst ? Math.random() * Math.PI * 2 : 0
+    const bSpeed = Math.random() * 3.5 + 1
+    return {
+      x: x ?? Math.random() * W,
+      y: y ?? Math.random() * H,
+      vx:      burst ? Math.cos(angle) * bSpeed : (Math.random() - 0.5) * 0.25,
+      vy:      burst ? Math.sin(angle) * bSpeed : -speed,
+      baseVy:  burst ? 0 : -speed,
+      size:    burst ? Math.random() * 5 + 2 : 1.5 + z * 3.5,
+      color:   burst ? '#C7622A' : COLORS[Math.floor(Math.random() * COLORS.length)],
+      alpha:   burst ? 0.85 : 0.15 + z * 0.55,
+      z,
+      shape:   Math.random() > 0.72 ? 'diamond' : 'circle',
+      phase:   Math.random() * Math.PI * 2,
+      burst,
+      decay:   burst ? 0.018 + Math.random() * 0.01 : 0,
+    }
+  }
+
+  function initParticles() {
+    particles = []
+    const count = Math.min(90, Math.floor((W * H) / 5500))
+    for (let i = 0; i < count; i++) particles.push(mkParticle())
+  }
+
+  function drawParticle(p: Particle) {
+    if (!ctx) return
+    ctx.save()
+    ctx.globalAlpha = Math.max(0, p.alpha)
+    ctx.fillStyle   = p.color
+    if (p.shape === 'diamond') {
+      const s = p.size * 0.75
+      ctx.translate(p.x, p.y)
+      ctx.rotate(Math.PI / 4 + p.phase * 0.3)
+      ctx.fillRect(-s / 2, -s / 2, s, s)
+    } else {
+      ctx.beginPath()
+      ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    ctx.restore()
+  }
+
+  function tick() {
+    if (!ctx) return
+    ctx.clearRect(0, 0, W, H)
+    frame++
+
+    // Remove dead burst particles
+    particles = particles.filter(p => p.alpha > 0.005)
+
+    for (const p of particles) {
+      // Gentle sinusoidal x drift
+      p.x  += p.vx + Math.sin(frame * 0.008 + p.phase) * 0.18
+      p.y  += p.vy
+
+      // Mouse repulsion
+      const dx   = p.x - mouse.x
+      const dy   = p.y - mouse.y
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      if (dist < 100 && dist > 0) {
+        const f = ((100 - dist) / 100) * 0.55
+        p.vx += (dx / dist) * f
+        p.vy += (dy / dist) * f
+      }
+
+      // Ease vx back toward 0, vy back toward baseVy
+      p.vx += (0 - p.vx) * 0.04
+      p.vy += (p.baseVy - p.vy) * 0.04
+
+      // Burst fade
+      if (p.burst) p.alpha -= p.decay
+
+      // Wrap-around for ambient particles
+      if (!p.burst) {
+        if (p.y < -8)      { p.y = H + 8;  p.x = Math.random() * W }
+        if (p.x < -8)        p.x = W + 8
+        if (p.x > W + 8)     p.x = -8
+      }
+
+      drawParticle(p)
+    }
+
+    animId = requestAnimationFrame(tick)
+  }
+
+  function resize() {
+    if (!canvasRef.value) return
+    const el = canvasRef.value
+    W = el.width  = el.offsetWidth
+    H = el.height = el.offsetHeight
+    initParticles()
+  }
+
+  function onMouseMove(e: MouseEvent) {
+    const r  = canvasRef.value!.getBoundingClientRect()
+    mouse.x  = e.clientX - r.left
+    mouse.y  = e.clientY - r.top
+  }
+
+  function onMouseLeave() { mouse.x = mouse.y = -9999 }
+
+  function onClick(e: MouseEvent) {
+    const r  = canvasRef.value!.getBoundingClientRect()
+    const cx = e.clientX - r.left
+    const cy = e.clientY - r.top
+    for (let i = 0; i < 22; i++) particles.push(mkParticle(cx, cy, true))
+  }
+
+  onMounted(() => {
+    if (!canvasRef.value) return
+    ctx = canvasRef.value.getContext('2d')
+    resize()
+    tick()
+    canvasRef.value.addEventListener('mousemove',  onMouseMove)
+    canvasRef.value.addEventListener('mouseleave', onMouseLeave)
+    canvasRef.value.addEventListener('click',      onClick)
+    window.addEventListener('resize', resize)
+  })
+
+  onUnmounted(() => {
+    cancelAnimationFrame(animId)
+    window.removeEventListener('resize', resize)
+  })
+}
 </script>
 
 <template>
   <section id="home" class="hero border-editorial">
     <div class="container hero-inner">
-      <p ref="eyebrowRef" class="hero-eyebrow text-eyebrow">
-        Frontend Engineer — Cluj, Romania
-      </p>
 
-      <h1 ref="headlineRef" class="hero-headline text-display">
-        The frontend layer is where<br>
-        design becomes <span class="hero-accent">real.</span>
-      </h1>
-
-      <div class="hero-bottom">
-        <p ref="bioRef" class="hero-bio">
-          I'm a frontend engineer who builds the space between a designer's vision
-          and a user's experience — through design systems, polished interactions,
-          and code that scales. 4+ years shipping production interfaces at
-          product-focused companies.
+      <!-- Left: text content -->
+      <div class="hero-text">
+        <p ref="eyebrowRef" class="hero-eyebrow text-eyebrow">
+          Frontend Engineer — Cluj, Romania
         </p>
 
-        <div ref="actionsRef" class="hero-actions">
-          <a href="#work" class="btn-primary">View Work</a>
-          <button class="btn-secondary font-mono" @click="copyEmail">
-            chioreanandrei92@gmail.com
-          </button>
+        <h1 ref="headlineRef" class="hero-headline text-display">
+          The frontend layer is where<br>
+          design becomes <span class="hero-accent">real.</span>
+        </h1>
+
+        <div class="hero-bottom">
+          <p ref="bioRef" class="hero-bio">
+            I'm a frontend engineer who builds the space between a designer's vision
+            and a user's experience — through design systems, polished interactions,
+            and code that scales. 4+ years shipping production interfaces at
+            product-focused companies.
+          </p>
+
+          <div ref="actionsRef" class="hero-actions">
+            <a href="#work" class="btn-primary">View Work</a>
+            <button class="btn-secondary font-mono" @click="copyEmail">
+              chioreanandrei92@gmail.com
+            </button>
+          </div>
         </div>
       </div>
+
+      <!-- Right: interactive canvas -->
+      <div class="hero-canvas-wrap" aria-hidden="true">
+        <canvas ref="canvasRef" class="hero-canvas" />
+        <p class="canvas-hint font-mono">click to interact</p>
+      </div>
+
     </div>
   </section>
 </template>
@@ -67,9 +238,16 @@ function copyEmail() {
 }
 
 .hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* ── Left column ─────────────────────────────────── */
+.hero-text {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .hero-eyebrow {
@@ -78,7 +256,6 @@ function copyEmail() {
   align-items: center;
   gap: 10px;
 }
-
 .hero-eyebrow::after {
   content: '';
   display: inline-block;
@@ -88,7 +265,6 @@ function copyEmail() {
 }
 
 .hero-headline {
-  max-width: 820px;
   margin-bottom: 40px;
   color: var(--text);
 }
@@ -101,15 +277,14 @@ function copyEmail() {
 .hero-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 32px;
   align-items: end;
 }
 
 .hero-bio {
-  font-size: 16px;
+  font-size: 15px;
   color: #5A4A35;
   line-height: 1.7;
-  max-width: 440px;
 }
 
 .hero-actions {
@@ -149,19 +324,55 @@ function copyEmail() {
   border-color: var(--text-muted);
 }
 
+/* ── Right column: canvas ────────────────────────── */
+.hero-canvas-wrap {
+  position: relative;
+  height: 420px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.hero-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+.canvas-hint {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--border);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+  .hero-canvas-wrap {
+    height: 260px;
+  }
+}
+
 @media (max-width: 768px) {
   .hero { padding-top: 110px; }
   .hero-bottom {
     grid-template-columns: 1fr;
     gap: 24px;
   }
-  .hero-bio { max-width: 100%; }
 }
 
 @media (max-width: 480px) {
-  .hero-actions {
-    width: 100%;
-  }
+  .hero-canvas-wrap { display: none; }
   .btn-secondary {
     max-width: 100%;
     overflow: hidden;
