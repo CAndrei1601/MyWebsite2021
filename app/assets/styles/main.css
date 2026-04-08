@@ -15,7 +15,7 @@
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 
   --spacing-section: 48px;
-  --max-width: 1080px;
+  --max-width: 1440px;
 }
 
 /* ── CSS Custom Properties (runtime access) ─── */
@@ -47,6 +47,8 @@ body {
   font-family: var(--font-sans);
   line-height: 1.6;
   overflow-x: hidden;
+  max-width: 1920px;
+  margin-inline: auto;
 }
 
 /* ── Typography Utilities ───────────────────── */

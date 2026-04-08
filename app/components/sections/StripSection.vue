@@ -1,28 +1,35 @@
 <!-- app/components/sections/StripSection.vue -->
 <template>
   <div class="strip">
-    <span class="strip-badge strip-badge--accent">Open to Work</span>
-    <span class="strip-item">Vue 3</span>
-    <span class="strip-item">React</span>
-    <span class="strip-item">TypeScript</span>
-    <span class="strip-item">Nuxt</span>
-    <span class="strip-item">Design Systems</span>
-    <span class="strip-item">GSAP</span>
-    <span class="strip-item">Component Architecture</span>
-    <span class="strip-item">UI / UX Engineering</span>
-    <span class="strip-item">Cluj, Romania</span>
+    <div class="container strip-inner">
+      <span class="strip-badge strip-badge--accent">Open to Work</span>
+      <span class="strip-item">Vue 3</span>
+      <span class="strip-item">React</span>
+      <span class="strip-item">TypeScript</span>
+      <span class="strip-item">Nuxt</span>
+      <span class="strip-item">Design Systems</span>
+      <span class="strip-item">GSAP</span>
+      <span class="strip-item">Component Architecture</span>
+      <span class="strip-item">UI / UX Engineering</span>
+      <span class="strip-item">Cluj, Romania</span>
+    </div>
   </div>
 </template>
 
 <style scoped>
+/* Border spans full width; content is constrained by .container */
 .strip {
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  padding: 16px 40px;
+}
+
+.strip-inner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .strip-item {
@@ -56,8 +63,7 @@
 }
 
 @media (max-width: 600px) {
-  .strip {
-    padding: 14px 20px;
+  .strip-inner {
     gap: 6px;
   }
 }
