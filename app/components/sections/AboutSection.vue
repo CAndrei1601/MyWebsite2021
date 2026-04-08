@@ -63,9 +63,10 @@ const facts = [
           <div class="experience-highlight gsap-about">
             <span class="text-eyebrow">Professional Experience</span>
             <p class="experience-text">
-              Worked on a high-traffic, multi-tenant platform delivering
-              <strong>12+ branded products</strong>, focusing on design systems,
-              token-driven UI, and scalable frontend architecture.
+              Played a key role in frontend implementation on a high-traffic, multi-tenant platform,
+              contributing to <strong>12+ branded product launches</strong>. Built and scaled UI foundations
+              early on, then focused on design systems, token-driven UI, and consistent component
+              implementation across brands.
             </p>
             <div class="experience-tags">
               <span class="exp-tag">12+ Products</span>
