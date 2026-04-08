@@ -39,7 +39,7 @@ export default defineNuxtConfig({
         { property: 'og:title', content: 'Andrei Chiorean — Frontend Engineer' },
         { property: 'og:description', content: 'Frontend engineer specialising in design systems, UI craft, and polished web interfaces.' },
         { property: 'og:type', content: 'website' },
-        { name: 'theme-color', content: '#FAF8F3' },
+        { name: 'theme-color', content: '#C7622A' },
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
