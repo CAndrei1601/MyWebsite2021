@@ -370,7 +370,9 @@ if (import.meta.client) {
 }
 
 @media (max-width: 480px) {
-  .hero-canvas-wrap { display: none; }
+  .hero-canvas-wrap {
+    height: 200px;
+  }
   .btn-secondary {
     max-width: 100%;
     overflow: hidden;
