@@ -78,7 +78,7 @@ const facts = [
 
           <div class="about-links gsap-about">
             <a
-              href="/CV- Chiorean Andrei 2026.pdf"
+              href="/cv-chiorean-andrei-2026.pdf"
               download
               class="project-link font-mono"
             >Download CV ↓</a>

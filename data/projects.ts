@@ -42,21 +42,8 @@ export const projects: Project[] = [
     reversed: true,
   },
   {
-    id: 'tgmures',
-    number: '03',
-    name: 'TgMures.ro',
-    subtitle: 'City Discovery Platform',
-    type: 'Full Product · Personal',
-    description:
-      'End-to-end local discovery platform for Târgu Mureș — restaurants, cafes, bars, and events. Built with search, category filtering, and venue detail pages. A full product challenge requiring both UI craft and architectural thinking.',
-    tags: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS'],
-    liveUrl: 'https://spotlymures.netlify.app/targu-mures',
-    image: '/images/tgmures.webp',
-    reversed: false,
-  },
-  {
     id: 'clinicatlas',
-    number: '04',
+    number: '03',
     name: 'ClinicAtlas',
     subtitle: 'Healthcare Data Tool',
     type: 'Utility Tool · Personal',
@@ -69,7 +56,7 @@ export const projects: Project[] = [
   },
   {
     id: 'cabanalirca',
-    number: '05',
+    number: '04',
     name: 'Cabana Lirca',
     subtitle: 'Mountain Cabin Booking Site',
     type: 'Client Work · Production',
